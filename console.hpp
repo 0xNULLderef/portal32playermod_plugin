@@ -11,7 +11,7 @@
 #define MSG_SYMBOL "Msg"
 #define WARNING_SYMBOL "Warning"
 
-#define DEFAULT_COLOR Color(255, 255, 255)
+#define DEFAULT_COLOR Color(1, 240, 111)
 
 class Console {
 public:

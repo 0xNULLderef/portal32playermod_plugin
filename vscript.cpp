@@ -1,7 +1,7 @@
 #include <vscript.hpp>
 
 #include <console.hpp>
-#include <cstdio>
+#include <offsets.hpp>
 
 void printHelloWorld() {
 	console->Print("Hello world\n");
@@ -20,13 +20,14 @@ VScript::VScript() {}
 bool VScript::Init() {
 	this->scriptmanager = Interface::Create(vscript->Name(), "VScriptManager009");
 	if(this->scriptmanager) {
-		this->scriptmanager->Hook(VScript::CreateVM_Hook, VScript::CreateVM, 8);
+		this->scriptmanager->Hook(VScript::CreateVM_Hook, VScript::CreateVM, Offsets::CreateVM);
 		return true;
 	}
 	return false;
 }
 
 void VScript::Shutdown() {
+	this->scriptmanager->Unhook(Offsets::CreateVM);
 	Interface::Delete(this->scriptmanager);
 }
 

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sdk.hpp>
+#include <portal2.hpp>
 #include <console.hpp>
 #include <interface.hpp>
 #include <vscript.hpp>
@@ -9,7 +10,10 @@
 Plugin plugin;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(Plugin, IServerPluginCallbacks, INTERFACEVERSION_ISERVERPLUGINCALLBACKS, plugin);
 
-Plugin::Plugin() {}
+Plugin::Plugin() {
+	Portal2* portal2 = new Portal2();
+	(void)portal2; // Janky ass hack so i don't need to set -Wno-unused-variable
+}
 
 bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory) {
 	console = new Console();
@@ -21,13 +25,19 @@ bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServ
 	return true;
 }
 
+void Plugin::Unload() {
+	console->Print("Gracefully returning the game to it's original state.\n");
+	console->Shutdown();
+	vscript->Shutdown();
+}
+
+const char* Plugin::GetPluginDescription() {
+	return "P2 32 player mod plugin (indev)";
+}
+
 // Unused callbacks
-void Plugin::Unload() {}
 void Plugin::Pause() {}
 void Plugin::UnPause() {}
-const char* Plugin::GetPluginDescription() {
-	return "Plugin base";
-}
 void Plugin::LevelInit(char const* pMapName) {}
 void Plugin::ServerActivate(void* pEdictList, int edictCount, int clientMax) {}
 void Plugin::GameFrame(bool simulating) {}

@@ -39,6 +39,14 @@ public:
 		return false;
 	}
 
+	bool Unhook(int index) {
+		if(index >= 0 && index < this->vtableSize) {
+			this->copy[index + 1] = this->vtable[index];
+			return true;
+		}
+		return false;
+	}
+
 	static Interface* Create(const char* filename, const char* interfaceSymbol, bool copyVtable = true, bool autoHook = true);
 	static void Delete(Interface* ptr);
 	static void* GetPtr(const char* filename, const char* interfaceSymbol);
