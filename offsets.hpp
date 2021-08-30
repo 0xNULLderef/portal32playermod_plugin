@@ -13,6 +13,7 @@ namespace Offsets {
 	extern int InternalSetValue;
 	extern int InternalSetFloatValue;
 	extern int InternalSetIntValue;
-	extern int GetAllServerClasses;
 	extern int CreateVM;
+	extern int Think;
+	extern int UTIL_PlayerByIndex;
 };

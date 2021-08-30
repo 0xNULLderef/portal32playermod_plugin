@@ -8,8 +8,8 @@ class Server {
 public:
 	Interface* g_ServerGameDLL = nullptr;
 
-	using _GetAllServerClasses = ServerClass* (*)();
-	_GetAllServerClasses GetAllServerClasses = nullptr;
+	using _UTIL_PlayerByIndex = void*(__cdecl*)(int index);
+	_UTIL_PlayerByIndex UTIL_PlayerByIndex = nullptr;
 
 public:
 	Server();
@@ -17,3 +17,5 @@ public:
 	void Shutdown();
 	const char* Name() { return MODULE("server"); }
 };
+
+extern Server* server;

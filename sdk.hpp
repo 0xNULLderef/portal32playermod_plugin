@@ -4,6 +4,9 @@
 #include <cstdint>
 #include <cmath>
 
+#define __rescalll __attribute__((__cdecl__))
+#define __rescall __attribute__((__cdecl__))
+
 // --- Generic ---
 
 struct Color {
@@ -783,6 +786,123 @@ inline ScriptBindingFunc_t ScriptCreateBinding(OBJECT_TYPE_PTR pObject, FUNCTION
 }
 
 #define ScriptRegisterFunction(pVM, func, description) ScriptRegisterFunctionNamed(pVM, func, #func, description)
+
+// -- Tier1 command stuff --
+
+struct ConCommandBase;
+struct CCommand;
+typedef void (*FnChangeCallback_t)(void* var, const char* pOldValue, float flOldValue);
+
+#define COMMAND_COMPLETION_MAXITEMS 64
+#define COMMAND_COMPLETION_ITEM_LENGTH 64
+
+using _CommandCallback = void (*)(const CCommand& args);
+using _CommandCompletionCallback = int (*)(const char* partial, char commands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH]);
+using _InternalSetValue = void(__rescalll*)(void* thisptr, const char* value);
+using _InternalSetFloatValue = void(__rescalll*)(void* thisptr, float value);
+using _InternalSetIntValue = void(__rescalll*)(void* thisptr, int value);
+using _RegisterConCommand = void(__rescalll*)(void* thisptr, ConCommandBase* pCommandBase);
+using _UnregisterConCommand = void(__rescalll*)(void* thisptr, ConCommandBase* pCommandBase);
+using _FindCommandBase = void*(__rescalll*)(void* thisptr, const char* name);
+using _InstallGlobalChangeCallback = void(__rescalll*)(void* thisptr, FnChangeCallback_t callback);
+using _RemoveGlobalChangeCallback = void(__rescalll*)(void* thisptr, FnChangeCallback_t callback);
+using _AutoCompletionFunc = int(__rescalll*)(void* thisptr, char const* partial, char commands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH]);
+
+struct ConCommandBase {
+	void* ConCommandBase_VTable;
+	ConCommandBase* m_pNext;
+	bool m_bRegistered;
+	const char* m_pszName;
+	const char* m_pszHelpString;
+	int m_nFlags;
+
+	ConCommandBase(const char* name, int flags, const char* helpstr) :
+		ConCommandBase_VTable(nullptr),
+		m_pNext(nullptr),
+		m_bRegistered(nullptr),
+		m_pszName(name),
+		m_pszHelpString(helpstr),
+		m_nFlags(flags)
+	{}
+};
+
+struct CCommand {
+	enum {
+		COMMAND_MAX_ARGC = 64,
+		COMMAND_MAX_LENGTH = 512
+	};
+	int m_nArgc;
+	int m_nArgv0Size;
+	char m_pArgSBuffer[COMMAND_MAX_LENGTH];
+	char m_pArgvBuffer[COMMAND_MAX_LENGTH];
+	const char* m_ppArgv[COMMAND_MAX_ARGC];
+
+	int ArgC() const {
+		return this->m_nArgc;
+	}
+	const char* Arg(int nIndex) const {
+		return this->m_ppArgv[nIndex];
+	}
+	const char* operator[](int nIndex) const {
+		return Arg(nIndex);
+	}
+};
+
+struct ConCommand : ConCommandBase {
+	union {
+		void* m_fnCommandCallbackV1;
+		_CommandCallback m_fnCommandCallback;
+		void* m_pCommandCallback;
+	};
+
+	union {
+		_CommandCompletionCallback m_fnCompletionCallback;
+		void* m_pCommandCompletionCallback;
+	};
+
+	bool m_bHasCompletionCallback : 1;
+	bool m_bUsingNewCommandCallback : 1;
+	bool m_bUsingCommandCallbackInterface : 1;
+
+	ConCommand(const char* pName, _CommandCallback callback, const char* pHelpString, int flags, _CommandCompletionCallback completionFunc) :
+		ConCommandBase(pName, flags, pHelpString),
+		m_fnCommandCallback(callback),
+		m_fnCompletionCallback(completionFunc),
+		m_bHasCompletionCallback(completionFunc != nullptr),
+		m_bUsingNewCommandCallback(true),
+		m_bUsingCommandCallbackInterface(false)
+	{}
+};
+
+struct ConVar : ConCommandBase {
+	void* ConVar_VTable;
+	ConVar* m_pParent;
+	const char* m_pszDefaultValue;
+	char* m_pszString;
+	int m_StringLength;
+	float m_fValue;
+	int m_nValue;
+	bool m_bHasMin;
+	float m_fMinVal;
+	bool m_bHasMax;
+	float m_fMaxVal;
+	CUtlVector<FnChangeCallback_t> m_fnChangeCallback;
+
+	ConVar(const char* name, const char* value, int flags, const char* helpstr, bool hasmin, float min, bool hasmax, float max) :
+		ConCommandBase(name, flags, helpstr),
+		ConVar_VTable(nullptr),
+		m_pParent(nullptr),
+		m_pszDefaultValue(value),
+		m_pszString(nullptr),
+		m_fValue(0.0f),
+		m_nValue(0),
+		m_bHasMin(hasmin),
+		m_fMinVal(min),
+		m_bHasMax(hasmax),
+		m_fMaxVal(max),
+		m_fnChangeCallback()
+	{}
+};
 
 // -- Server stuff --
 

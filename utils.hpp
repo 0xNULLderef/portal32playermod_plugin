@@ -19,3 +19,9 @@
 
 #define DETOUR_T(type, name, ...) \
 	type __cdecl name##_Hook(void* thisptr, ##__VA_ARGS__)
+
+#define SAFE_DELETE(ptr) \
+	if(ptr) { \
+		delete ptr; \
+		ptr = nullptr; \
+	}

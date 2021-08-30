@@ -24,7 +24,8 @@ Portal2::Portal2() {
 	m_pConCommandList = 48;
 
 	// server.so
-	GetAllServerClasses = 10;
+	Think = 31;
+	UTIL_PlayerByIndex = 70; // from CServerGameDLL::Think
 
 	// vscript.so
 	CreateVM = 8; // Technically not an offset but an index, but this is the way i'd manage it

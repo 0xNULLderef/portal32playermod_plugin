@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-m32 -g -I. -fPIC -Wall -Wno-reorder -Wno-write-strings -Wno-init-self
+CXXFLAGS=-m32 -g -I. -fPIC -Wall -Wno-reorder -Wno-write-strings -Wno-init-self -O0
 LDFLAGS=-m32 -shared
 TARGET=pl.so
 
