@@ -16,6 +16,9 @@ public:
 	bool Init();
 	void Shutdown();
 	const char* Name() { return MODULE("server"); }
+
+public:
+	const char* GetPlayerName(int index);
 };
 
 extern Server* server;

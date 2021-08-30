@@ -16,4 +16,5 @@ namespace Offsets {
 	int CreateVM;
 	int Think;
 	int UTIL_PlayerByIndex;
+	int m_szNetname;
 };

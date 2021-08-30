@@ -13,21 +13,13 @@
 Plugin plugin;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(Plugin, IServerPluginCallbacks, INTERFACEVERSION_ISERVERPLUGINCALLBACKS, plugin);
 
-#include <stdio.h>
-
 Plugin::Plugin() {
 	Portal2* portal2 = new Portal2();
 	(void)portal2; // Janky ass hack so i don't need to set -Wno-unused-variable
 }
 
-CON_COMMAND(p232_test, "p232_test (index) - find serverside offset\n") {
-	void* entity = server->UTIL_PlayerByIndex(atoi(args[1]) + 1);
-	if(entity != nullptr) {
-		void* data = Memory::VMT<void* (*)(void*)>(entity, 87)(entity);
-		
-	} else {
-		console->Print("name: nullptr\n");
-	}
+CON_COMMAND(get_username, "get_username (index) - prints username for user of index\n") {
+	console->Print("name: %s\n", server->GetPlayerName(atoi(args[1])));
 }
 
 bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory) {

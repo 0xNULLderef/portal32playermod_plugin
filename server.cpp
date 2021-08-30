@@ -18,4 +18,13 @@ void Server::Shutdown() {
 	Interface::Delete(this->g_ServerGameDLL);
 }
 
+const char* Server::GetPlayerName(int index) {
+	void* entity = server->UTIL_PlayerByIndex(index + 1); // WHY DOES THE INDEX START AT 1?! VALVE PLEASE FIX!
+	if(entity != nullptr) {
+		return (const char*)((uintptr_t)entity + Offsets::m_szNetname);
+	} else {
+		return "";
+	}
+}
+
 Server* server;

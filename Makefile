@@ -2,11 +2,12 @@ CXX=g++
 CXXFLAGS=-m32 -g -I. -fPIC -Wall -Wno-reorder -Wno-write-strings -Wno-init-self -O0
 LDFLAGS=-m32 -shared
 TARGET=pl.so
+PLUGINDIR="/home/konrad/.local/share/Steam/steamapps/common/Portal 2/portal2"
 
 SRCS=$(wildcard *.cpp)
 OBJS=$(patsubst %.cpp,%.o,$(SRCS))
 
-all: clean $(TARGET)
+all: clean $(TARGET) copy
 
 $(TARGET): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $^
@@ -16,3 +17,6 @@ $(TARGET): $(OBJS)
 
 clean:
 	rm -rf $(TARGET) *.o
+
+copy:
+	cp -v $(TARGET) $(PLUGINDIR)

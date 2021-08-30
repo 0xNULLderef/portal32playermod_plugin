@@ -686,84 +686,105 @@ inline ScriptFunctionBindingStorageType_t ScriptConvertFreeFuncPtrToVoid(FUNCPTR
 	}
 }
 
-template <typename FUNCTION_RETTYPE>
-inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t *pDesc, FUNCTION_RETTYPE (*pfnProxied)()) {
-	pDesc->m_ReturnType = ScriptDeduceType(FUNCTION_RETTYPE);
-}
+// new stuff for vscript so not only 1 func param?
 
-template <typename OBJECT_TYPE_PTR, typename FUNCTION_CLASS, typename FUNCTION_RETTYPE>
-inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t *pDesc, OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)()) {
-	pDesc->m_ReturnType = ScriptDeduceType(FUNCTION_RETTYPE);
-}
+#define	FUNC_TEMPLATE_FUNC_PARAMS_0
+#define	FUNC_TEMPLATE_FUNC_PARAMS_1	, typename FUNC_ARG_TYPE_1
 
-template <typename OBJECT_TYPE_PTR, typename FUNCTION_CLASS, typename FUNCTION_RETTYPE>
-inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t *pDesc, OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)() const) {
-	pDesc->m_ReturnType = ScriptDeduceType(FUNCTION_RETTYPE);
-}
+#define	SCRIPT_BINDING_ARGS_0
+#define	SCRIPT_BINDING_ARGS_1 pArguments[0]
 
-template <typename FUNC_TYPE, typename FUNCTION_RETTYPE>
-class CNonMemberScriptBinding0 {
-public:
-	static bool Call(ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn) {
-		if(nArguments != 0|| !pReturn || pContext)
-			return false;
-		*pReturn = (ScriptConvertFreeFuncPtrFromVoid<FUNC_TYPE>(pFunction))();
-		if(pReturn->m_type == FIELD_VECTOR)
-			pReturn->m_pVector = new Vector(*pReturn->m_pVector);
-		return true;
+#define FUNC_BASE_TEMPLATE_FUNC_PARAMS_PASSTHRU_0
+#define FUNC_BASE_TEMPLATE_FUNC_PARAMS_PASSTHRU_1 , FUNC_BASE_TEMPLATE_FUNC_PARAMS_1
+
+#define	FUNC_BASE_TEMPLATE_FUNC_PARAMS_0
+#define	FUNC_BASE_TEMPLATE_FUNC_PARAMS_1	FUNC_ARG_TYPE_1
+
+#define	FUNC_APPEND_PARAMS_0
+#define	FUNC_APPEND_PARAMS_1 pDesc->m_Parameters.Append(ScriptDeduceType(FUNC_ARG_TYPE_1));
+
+#define DEFINE_NONMEMBER_FUNC_TYPE_DEDUCER(N) \
+	template <typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
+	inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t *pDesc, FUNCTION_RETTYPE (*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N)) { \
+		pDesc->m_ReturnType = ScriptDeduceType(FUNCTION_RETTYPE); \
+		FUNC_APPEND_PARAMS_##N \
 	}
-};
-
-template <typename FUNC_TYPE>
-class CNonMemberScriptBinding0<FUNC_TYPE, void> {
-public:
-	static bool Call( ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn ) {
-		if(nArguments != 0|| pReturn || pContext)
-			return false;
-		(ScriptConvertFreeFuncPtrFromVoid<FUNC_TYPE>(pFunction))();
-		return true;
+#define DEFINE_MEMBER_FUNC_TYPE_DEDUCER(N) \
+	template <typename OBJECT_TYPE_PTR, typename FUNCTION_CLASS, typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
+	inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t *pDesc, OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N)) { \
+		pDesc->m_ReturnType = ScriptDeduceType(FUNCTION_RETTYPE); \
+		FUNC_APPEND_PARAMS_##N \
 	}
-};
-
-template <class OBJECT_TYPE_PTR, typename FUNC_TYPE, typename FUNCTION_RETTYPE>
-class CMemberScriptBinding0 {
-public:
-	static bool Call( ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn )	{
-		if(nArguments != 0|| !pReturn || !pContext)
-			return false;
-		*pReturn = (((OBJECT_TYPE_PTR)(pContext))->*ScriptConvertFuncPtrFromVoid<FUNC_TYPE>(pFunction))();
-		if(pReturn->m_type == FIELD_VECTOR)
-			pReturn->m_pVector = new Vector(*pReturn->m_pVector);
-		return true;
+#define DEFINE_CONST_MEMBER_FUNC_TYPE_DEDUCER(N) \
+	template <typename OBJECT_TYPE_PTR, typename FUNCTION_CLASS, typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
+	inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t *pDesc, OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N) const) { \
+		pDesc->m_ReturnType = ScriptDeduceType(FUNCTION_RETTYPE); \
+		FUNC_APPEND_PARAMS_##N \
 	}
-};
+DEFINE_NONMEMBER_FUNC_TYPE_DEDUCER(0)
+DEFINE_NONMEMBER_FUNC_TYPE_DEDUCER(1)
+DEFINE_MEMBER_FUNC_TYPE_DEDUCER(0)
+DEFINE_MEMBER_FUNC_TYPE_DEDUCER(1)
+DEFINE_CONST_MEMBER_FUNC_TYPE_DEDUCER(0)
+DEFINE_CONST_MEMBER_FUNC_TYPE_DEDUCER(1)
 
-template <class OBJECT_TYPE_PTR, typename FUNC_TYPE>
-class CMemberScriptBinding0<OBJECT_TYPE_PTR, FUNC_TYPE, void> {
-public:
-	static bool Call(ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn) {
-		if(nArguments != 0|| pReturn || !pContext)
-			return false;
-		(((OBJECT_TYPE_PTR)(pContext))->*ScriptConvertFuncPtrFromVoid<FUNC_TYPE>(pFunction))();
-		return true;
+#define DEFINE_SCRIPT_BINDINGS(N) \
+	template <typename FUNC_TYPE, typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
+	class CNonMemberScriptBinding##N { \
+	public: \
+ 		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn) { \
+			if (nArguments != N || !pReturn || pContext)return false; \
+			*pReturn = (ScriptConvertFreeFuncPtrFromVoid<FUNC_TYPE>(pFunction))(SCRIPT_BINDING_ARGS_##N); \
+			if (pReturn->m_type == FIELD_VECTOR) pReturn->m_pVector = new Vector(*pReturn->m_pVector); \
+ 			return true; \
+ 		} \
+	}; \
+	template <typename FUNC_TYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
+	class CNonMemberScriptBinding##N<FUNC_TYPE, void FUNC_BASE_TEMPLATE_FUNC_PARAMS_PASSTHRU_##N> { \
+	public: \
+		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn) { \
+			if (nArguments != N || pReturn || pContext) return false; \
+			(ScriptConvertFreeFuncPtrFromVoid<FUNC_TYPE>(pFunction))(SCRIPT_BINDING_ARGS_##N); \
+			return true; \
+		} \
+	}; \
+	template <class OBJECT_TYPE_PTR, typename FUNC_TYPE, typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
+	class CMemberScriptBinding##N { \
+	public: \
+ 		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn) { \
+			if (nArguments != N || !pReturn || !pContext) return false; \
+			*pReturn = (((OBJECT_TYPE_PTR)(pContext))->*ScriptConvertFuncPtrFromVoid<FUNC_TYPE>(pFunction))(SCRIPT_BINDING_ARGS_##N); \
+			if (pReturn->m_type == FIELD_VECTOR) pReturn->m_pVector = new Vector(*pReturn->m_pVector); \
+ 			return true; \
+ 		} \
+	}; \
+	template <class OBJECT_TYPE_PTR, typename FUNC_TYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
+	class CMemberScriptBinding##N<OBJECT_TYPE_PTR, FUNC_TYPE, void FUNC_BASE_TEMPLATE_FUNC_PARAMS_PASSTHRU_##N> { \
+	public: \
+		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn) { \
+			if (nArguments != N || pReturn || !pContext) return false; \
+			(((OBJECT_TYPE_PTR)(pContext))->*ScriptConvertFuncPtrFromVoid<FUNC_TYPE>(pFunction))(SCRIPT_BINDING_ARGS_##N); \
+			return true; \
+		} \
+	}; \
+	template <typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
+	inline ScriptBindingFunc_t ScriptCreateBinding(FUNCTION_RETTYPE (*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N )) { \
+		typedef FUNCTION_RETTYPE (*Func_t)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N); \
+		return &CNonMemberScriptBinding##N<Func_t, FUNCTION_RETTYPE FUNC_BASE_TEMPLATE_FUNC_PARAMS_PASSTHRU_##N>::Call; \
+	} \
+	template <typename OBJECT_TYPE_PTR, typename FUNCTION_CLASS, typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
+		inline ScriptBindingFunc_t ScriptCreateBinding(OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N)) { \
+		typedef FUNCTION_RETTYPE (FUNCTION_CLASS::*Func_t)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N); \
+		return &CMemberScriptBinding##N<OBJECT_TYPE_PTR, Func_t, FUNCTION_RETTYPE FUNC_BASE_TEMPLATE_FUNC_PARAMS_PASSTHRU_##N>::Call; \
+	} \
+	template <typename OBJECT_TYPE_PTR, typename FUNCTION_CLASS, typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
+		inline ScriptBindingFunc_t ScriptCreateBinding(OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N) const) { \
+		typedef FUNCTION_RETTYPE (FUNCTION_CLASS::*Func_t)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N); \
+		return &CMemberScriptBinding##N<OBJECT_TYPE_PTR, Func_t, FUNCTION_RETTYPE FUNC_BASE_TEMPLATE_FUNC_PARAMS_PASSTHRU_##N>::Call; \
 	}
-};
 
-template <typename FUNCTION_RETTYPE>
-inline ScriptBindingFunc_t ScriptCreateBinding(FUNCTION_RETTYPE (*pfnProxied)()) {
-	typedef FUNCTION_RETTYPE (*Func_t)();
-	return &CNonMemberScriptBinding0<Func_t, FUNCTION_RETTYPE>::Call;
-}
-template <typename OBJECT_TYPE_PTR, typename FUNCTION_CLASS, typename FUNCTION_RETTYPE>
-inline ScriptBindingFunc_t ScriptCreateBinding(OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)()) {
-	typedef FUNCTION_RETTYPE (FUNCTION_CLASS::*Func_t)();
-	return &CMemberScriptBinding0<OBJECT_TYPE_PTR, Func_t, FUNCTION_RETTYPE>::Call;
-}
-template <typename OBJECT_TYPE_PTR, typename FUNCTION_CLASS, typename FUNCTION_RETTYPE>
-inline ScriptBindingFunc_t ScriptCreateBinding(OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)() const) {
-	typedef FUNCTION_RETTYPE (FUNCTION_CLASS::*Func_t)();
-	return &CMemberScriptBinding0<OBJECT_TYPE_PTR, Func_t, FUNCTION_RETTYPE>::Call;
-}
+DEFINE_SCRIPT_BINDINGS(0);
+DEFINE_SCRIPT_BINDINGS(1);
 
 #define ScriptInitFuncDescriptorNamed(pDesc, func, scriptName) { \
 	(pDesc)->m_pszScriptName = scriptName; \
@@ -997,3 +1018,4 @@ struct ServerClass {
 	int m_ClassID;
 	int m_InstanceBaselineIndex;
 };
+
