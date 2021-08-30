@@ -18,7 +18,7 @@ Plugin::Plugin() {
 	(void)portal2; // Janky ass hack so i don't need to set -Wno-unused-variable
 }
 
-CON_COMMAND(get_username, "get_username (index) - prints username for user of index\n") {
+CON_COMMAND(get_username, "get_username (index) - Gets player username by index (starting at 0)\n") {
 	console->Print("name: %s\n", server->GetPlayerName(atoi(args[1])));
 }
 
