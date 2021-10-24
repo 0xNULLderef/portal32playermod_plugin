@@ -1,6 +1,5 @@
 #include <main.hpp>
 
-#include <iostream>
 #include <sdk.hpp>
 #include <portal2.hpp>
 #include <console.hpp>
@@ -11,6 +10,9 @@
 #include <command.hpp>
 #include <engine.hpp>
 #include <offsets.hpp>
+#include <dumphex.hpp>
+
+#include <iostream>
 
 Plugin plugin;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(Plugin, IServerPluginCallbacks, INTERFACEVERSION_ISERVERPLUGINCALLBACKS, plugin);
@@ -18,35 +20,6 @@ EXPOSE_SINGLE_INTERFACE_GLOBALVAR(Plugin, IServerPluginCallbacks, INTERFACEVERSI
 Plugin::Plugin() {
 	Portal2* portal2 = new Portal2();
 	(void)portal2; // Janky ass hack so i don't need to set -Wno-unused-variable
-}
-
-void DumpHex(const void* data, size_t size) {
-	char ascii[17];
-	size_t i, j;
-	ascii[16] = '\0';
-	for(i = 0; i < size; ++i) {
-		console->Print("%02X ", ((unsigned char*)data)[i]);
-		if(((unsigned char*)data)[i] >= ' ' && ((unsigned char*)data)[i] <= '~') {
-			ascii[i % 16] = ((unsigned char*)data)[i];
-		} else {
-			ascii[i % 16] = '.';
-		}
-		if((i+1) % 8 == 0 || i+1 == size) {
-			console->Print(" ");
-			if((i+1) % 16 == 0) {
-				console->Print("|  %s \n", ascii);
-			} else if(i+1 == size) {
-				ascii[(i+1) % 16] = '\0';
-				if((i+1) % 16 <= 8) {
-					console->Print(" ");
-				}
-				for(j = (i+1) % 16; j < 16; ++j) {
-					console->Print("   ");
-				}
-				console->Print("|  %s \n", ascii);
-			}
-		}
-	}
 }
 
 CON_COMMAND(ut_mod, "modifies the game to use 32 player mod (livepatch)") {
@@ -77,6 +50,42 @@ CON_COMMAND(ut_read, "modifies the game to use 32 player mod (livepatch)") {
 	console->Print("Values: 0x%02x 0x%02x (should be 0x20 0x20)\n", ptr1[0], ptr2[0]);
 }
 
+CON_COMMAND(ut_meme, "the meme, absolutely based.") {
+	auto vengineClient = Interface::Create("engine.so", "VEngineClient015");
+	uintptr_t SetTimescale = vengineClient->Original(158);
+	Interface::Delete(vengineClient);
+	uint8_t* ptr1 = (uint8_t*)(SetTimescale + 12);
+	uint8_t backup[8];
+	memcpy(backup, ptr1, 8);
+	Memory::UnProtect((void*)ptr1, 8);
+
+	// 8b 83 7c fe ff ff	MOV		EAX,dword ptr [EBX + 0xfffffe7c]
+	// 5b					POP		EBX
+	// c3					RET
+	ptr1[0] = 0x8b;
+	ptr1[1] = 0x83;
+	ptr1[2] = 0x7c;
+	ptr1[3] = 0xfe;
+	ptr1[4] = 0xff;
+	ptr1[5] = 0xff;
+	ptr1[6] = 0x5b;
+	ptr1[7] = 0xc3;
+
+	using _DumpSv = uintptr_t(__cdecl *)();
+	_DumpSv DumpSv = (_DumpSv)SetTimescale;
+	uintptr_t sv = DumpSv();
+
+	// copy the backup back
+	memcpy(ptr1, backup, 8);
+
+	console->Print("sv: %x\n", *(void**)sv);
+	console->Print("=============================\n");
+	DumpHex((void*)sv, 0x200);
+	console->Print("=============================\n");
+	DumpHex(*(void**)sv, 0x200);
+	console->Print("=============================\n");
+}
+
 bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory) {
 	console = new Console();
 	if(!console->Init()) return false;
@@ -86,14 +95,16 @@ bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServ
 	tier1 = new Tier1();
 	if(!tier1->Init()) return false;
 
-	vscript = new VScript();
-	if(!vscript->Init()) return false;
+	
+
+	server = new Server();
+	if(!server->Init()) return false;
 
 	engine = new Engine();
 	if(!engine->Init()) return false;
-
-	// server = new Server();
-	// if(!server->Init()) return false;
+	
+	vscript = new VScript();
+	if(!vscript->Init()) return false;
 
 	Command::RegisterAll();
 
@@ -104,7 +115,8 @@ void Plugin::Unload() {
 	console->Print("Gracefully returning the game to it's original state.\n");
 	console->Shutdown();
 	vscript->Shutdown();
-	// server->Shutdown();
+	engine->Shutdown();
+	server->Shutdown();
 	Command::UnregisterAll();
 	tier1->Shutdown(); // Do this one later so that it doesn't try to unregister without tier1 loaded...
 }

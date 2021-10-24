@@ -12,11 +12,17 @@
 #define REDECL(name) decltype(name) name
 
 // Detour stuff
+#define DECL_DETOUR(name, ...) \
+	using _##name = int(__rescall *)(void *thisptr, ##__VA_ARGS__); \
+	static _##name name; \
+	static int __rescall name##_Hook(void *thisptr, ##__VA_ARGS__)
 #define DECL_DETOUR_T(type, name, ...) \
 	using _##name = type(__cdecl*)(void* thisptr, ##__VA_ARGS__); \
 	static _##name name; \
 	static type __cdecl name##_Hook(void* thisptr, ##__VA_ARGS__);
 
+#define DETOUR(name, ...) \
+	int __rescall name##_Hook(void *thisptr, ##__VA_ARGS__)
 #define DETOUR_T(type, name, ...) \
 	type __cdecl name##_Hook(void* thisptr, ##__VA_ARGS__)
 

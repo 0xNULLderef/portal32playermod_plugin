@@ -7,7 +7,8 @@ PLUGINDIR="/home/konrad/.local/share/Steam/steamapps/common/Portal 2/portal2" # 
 SRCS=$(wildcard *.cpp)
 OBJS=$(patsubst %.cpp,%.o,$(SRCS))
 
-all: clean $(TARGET) copy
+all: clean $(TARGET)
+	cp -v $(TARGET) $(PLUGINDIR)
 
 $(TARGET): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $^
@@ -17,6 +18,3 @@ $(TARGET): $(OBJS)
 
 clean:
 	rm -rf $(TARGET) *.o
-
-copy:
-	cp -v $(TARGET) $(PLUGINDIR)

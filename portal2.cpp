@@ -26,7 +26,6 @@ Portal2::Portal2() {
 	m_pConCommandList = 48;
 
 	// server.so
-	gpGlobals = 12; // UTIL_PlayerByIndex
 	Think = 31;
 	UTIL_PlayerByIndex = 70; // from CServerGameDLL::Think
 	IsPlayer = 86; // CBasePlayer
@@ -34,6 +33,12 @@ Portal2::Portal2() {
 
 	// vscript.so
 	CreateVM = 8; // Technically not an offset but an index, but this is the way i'd manage it
+
+	// client.so
+	MsgFunc_SayText2 = 32;
+	GetHud = 146;
+	FindElement = 161;
+	ChatPrintf = 25;
 }
 
 Portal2* portal2;

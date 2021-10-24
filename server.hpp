@@ -11,8 +11,6 @@ public:
 	using _UTIL_PlayerByIndex = void*(__cdecl*)(int index);
 	_UTIL_PlayerByIndex UTIL_PlayerByIndex = nullptr;
 
-	CGlobalVars* gpGlobals = nullptr;
-
 public:
 	Server();
 	bool Init();

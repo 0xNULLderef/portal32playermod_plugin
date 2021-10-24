@@ -3,16 +3,14 @@
 #include <interface.hpp>
 
 class Client {
+private:
+	Interface *g_ClientDLL = nullptr;
+	Interface *g_HudChat = nullptr;
+
 public:
-	Interface* g_ClientTools;
+	using _ChatPrintf = void (*)(void *thisptr, int iPlayerIndex, int iFilter, const char *fmt, ...);
 
-	using _NextParticleSystem = void*(__func*)(void* thisptr, void* searchResult);
-	_NextParticleSystem NextParticleSystem = nullptr;
-
-	CNewParticleEffect* GetParticleSystem(CNewParticleEffect* prev);
-	inline Vector GetPortalGunIndicatorColor() const { return this->portalGunIndicatorColor; }
-	void SetPortalGunIndicatorColor(Vector v);
-	void UpdatePortalGunIndicatorColor();
+	_ChatPrintf ChatPrintf = nullptr;
 
 public:
 	Client();
@@ -20,8 +18,8 @@ public:
 	void Shutdown();
 	const char* Name() { return MODULE("client"); }
 
-private:
-	Vector portalGunIndicatorColor;
+public:
+	DECL_DETOUR(MsgFunc_SayText2, bf_read &msg);
 };
 
-extern Client* engine;
+extern Client* client;
