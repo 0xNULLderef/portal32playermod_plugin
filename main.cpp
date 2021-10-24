@@ -32,9 +32,6 @@ bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServ
 	tier1 = new Tier1();
 	if(!tier1->Init()) return false;
 
-	client = new Client();
-	if(!client->Init()) return false;
-
 	server = new Server();
 	if(!server->Init()) return false;
 
@@ -44,6 +41,9 @@ bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServ
 	vscript = new VScript();
 	if(!vscript->Init()) return false;
 
+	client = new Client();
+	if(!client->Init()) return false;
+
 	Command::RegisterAll();
 
 	return true;
@@ -52,6 +52,7 @@ bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServ
 void Plugin::Unload() {
 	console->Print("Gracefully returning the game to it's original state.\n");
 	console->Shutdown();
+	client->Shutdown();
 	vscript->Shutdown();
 	engine->Shutdown();
 	server->Shutdown();
