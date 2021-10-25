@@ -55,6 +55,10 @@ void Interface::DisableHooks() {
 	}
 }
 
+Interface *Interface::Create(void *ptr, bool copyVtable, bool autoHook) {
+	return (ptr) ? new Interface(ptr, copyVtable, autoHook) : nullptr;
+}
+
 Interface* Interface::Create(const char* filename, const char* interfaceSymbol, bool copyVtable, bool autoHook) {
 	auto ptr = Interface::GetPtr(filename, interfaceSymbol);
 	return (ptr) ? new Interface(ptr, copyVtable, autoHook) : nullptr;

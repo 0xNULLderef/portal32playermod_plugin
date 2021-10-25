@@ -30,6 +30,12 @@ Portal2::Portal2() {
 
 	// vscript.so
 	CreateVM = 8; // Technically not an offset but an index, but this is the way i'd manage it
+
+	// client.so
+	MsgFunc_SayText2 = 32;
+	GetHud = 146;
+	FindElement = 161;
+	ChatPrintf = 25;
 }
 
 Portal2* portal2;

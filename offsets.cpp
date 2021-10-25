@@ -17,4 +17,8 @@ namespace Offsets {
 	int Think;
 	int UTIL_PlayerByIndex;
 	int m_szNetname;
+	extern int MsgFunc_SayText2;
+	extern int GetHud;
+	extern int FindElement;
+	extern int ChatPrintf;
 };

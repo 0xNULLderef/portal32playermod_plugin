@@ -24,6 +24,11 @@ ConCommand* Command::ThisPtr() {
 	return this->ptr;
 }
 
+Command::Command(const char *name) {
+	this->ptr = reinterpret_cast<ConCommand *>(tier1->FindCommandBase(tier1->g_pCVar->ThisPtr(), name));
+	this->isReference = true;
+}
+
 Command::Command(const char* pName, _CommandCallback callback, const char* pHelpString, int flags, _CommandCompletionCallback completionFunc) :
 	isReference(false),
 	isRegistered(false),

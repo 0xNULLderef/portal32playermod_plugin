@@ -9,6 +9,7 @@
 #include <tier1.hpp>
 #include <vscript.hpp>
 #include <server.hpp>
+#include <client.hpp>
 #include <command.hpp>
 
 #include <iostream>
@@ -34,11 +35,14 @@ bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServ
 	tier1 = new Tier1();
 	if(!tier1->Init()) return false;
 
-	vscript = new VScript();
-	if(!vscript->Init()) return false;
-
 	server = new Server();
 	if(!server->Init()) return false;
+
+	client = new Client();
+	if(!client->Init()) return false;
+
+	vscript = new VScript();
+	if(!vscript->Init()) return false;
 
 	Command::RegisterAll();
 
@@ -49,9 +53,10 @@ void Plugin::Unload() {
 	console->Print("Gracefully returning the game to it's original state.\n");
 	console->Shutdown();
 	vscript->Shutdown();
+	client->Shutdown();
 	server->Shutdown();
 	Command::UnregisterAll();
-	tier1->Shutdown(); // Do this one later so that it doesn't try to unregister without tier1 loaded...
+	tier1->Shutdown(); // Do this one last so that it doesn't try to unregister without tier1 loaded...
 }
 
 const char* Plugin::GetPluginDescription() {
