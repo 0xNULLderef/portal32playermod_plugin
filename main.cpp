@@ -19,7 +19,7 @@ Plugin::Plugin() {
 }
 
 CON_COMMAND(get_username, "get_username (index) - Gets player username by index (starting at 0)\n") {
-	console->Print("name: %s\n", server->GetPlayerName(atoi(args[1])));
+	console->Print("name: %p, %s\n", server->GetPlayerName(atoi(args[1])), server->GetPlayerName(atoi(args[1])));
 }
 
 bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory) {

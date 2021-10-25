@@ -3,6 +3,6 @@ This plugin is specifically meant as an addition to my teams 32 player mod for P
 
 Current features:
 - concommand: get_username, returns username of player at index (0-32 i think?)
-- vscriptfunc: getPlayerName, same as above, just a binding for vscript
+- vscript function: getPlayerName, same as above, just a binding for vscript
 
 If you got any issues, feel free to report, also seeking windows build maintainers since i kinda don't want to spend my time on setting up a cross compiler

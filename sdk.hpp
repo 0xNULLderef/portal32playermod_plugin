@@ -721,6 +721,7 @@ inline ScriptFunctionBindingStorageType_t ScriptConvertFreeFuncPtrToVoid(FUNCPTR
 		pDesc->m_ReturnType = ScriptDeduceType(FUNCTION_RETTYPE); \
 		FUNC_APPEND_PARAMS_##N \
 	}
+
 DEFINE_NONMEMBER_FUNC_TYPE_DEDUCER(0)
 DEFINE_NONMEMBER_FUNC_TYPE_DEDUCER(1)
 DEFINE_MEMBER_FUNC_TYPE_DEDUCER(0)
