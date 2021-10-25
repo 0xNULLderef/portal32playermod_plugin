@@ -1,14 +1,17 @@
 #include <main.hpp>
 
-#include <iostream>
 #include <sdk.hpp>
-#include <portal2.hpp>
-#include <console.hpp>
 #include <interface.hpp>
-#include <vscript.hpp>
+#include <portal2.hpp>
+
+// -- module includes --
+#include <console.hpp>
 #include <tier1.hpp>
+#include <vscript.hpp>
 #include <server.hpp>
 #include <command.hpp>
+
+#include <iostream>
 
 Plugin plugin;
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(Plugin, IServerPluginCallbacks, INTERFACEVERSION_ISERVERPLUGINCALLBACKS, plugin);
