@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sdk.hpp>
 #include <interface.hpp>
 #include <utils.hpp>
 
@@ -8,6 +9,9 @@ public:
 	Interface* scriptmanager;
 	void* g_pScriptVM;
 
+	using _Run = ScriptStatus_t (__cdecl*)(void* thisptr, const char *pszScript);
+	_Run Run = nullptr;
+
 public:
 	VScript();
 	bool Init();
@@ -15,6 +19,9 @@ public:
 	const char* Name() { return MODULE("vscript"); }
 
 	DECL_DETOUR_T(IScriptVM*, CreateVM, ScriptLanguage_t language);
+
+public:
+	void DoChatCallbacks(int id, char* message);
 };
 
 extern VScript* vscript;

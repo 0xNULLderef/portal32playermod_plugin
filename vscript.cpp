@@ -4,15 +4,29 @@
 #include <offsets.hpp>
 #include <server.hpp>
 
-const char* getPlayerName(int index) {
+#include <cstdio>
+#include <unordered_set>
+#include <string>
+
+std::unordered_set<std::string> chatCallbackNames;
+
+const char* GetPlayerName(int index) {
 	return server->GetPlayerName(index);
+}
+
+void AddChatCallback(const char* funcName) {
+	chatCallbackNames.insert(std::string(funcName));
 }
 
 REDECL(VScript::CreateVM);
 DETOUR_T(IScriptVM*, VScript::CreateVM, ScriptLanguage_t language) {
 	IScriptVM* g_pScriptVM = VScript::CreateVM(thisptr, language);
 	vscript->g_pScriptVM = g_pScriptVM;
-	ScriptRegisterFunction(g_pScriptVM, getPlayerName, "Gets player username by index (starting at 0)");
+	auto vmInterface = Interface::Create(vscript->g_pScriptVM);
+	vscript->Run = vmInterface->Original<_Run>(Offsets::Run);
+	Interface::Delete(vmInterface);
+	ScriptRegisterFunction(g_pScriptVM, GetPlayerName, "Gets player username by index");
+	ScriptRegisterFunction(g_pScriptVM, AddChatCallback, "Adds chat callback called with player id and message");
 	return g_pScriptVM;
 }
 
@@ -30,6 +44,14 @@ bool VScript::Init() {
 void VScript::Shutdown() {
 	this->scriptmanager->Unhook(Offsets::CreateVM);
 	Interface::Delete(this->scriptmanager);
+}
+
+void VScript::DoChatCallbacks(int id, char* message) {
+	char buf[256];
+	for(auto& callbackName: chatCallbackNames) {
+		snprintf(buf, 256, "%s(%d, \"%s\")", callbackName.c_str(), id, message);
+		vscript->Run(vscript->g_pScriptVM, buf);
+	}
 }
 
 VScript* vscript;

@@ -29,7 +29,8 @@ Portal2::Portal2() {
 	m_szNetname = 3901;
 
 	// vscript.so
-	CreateVM = 8; // Technically not an offset but an index, but this is the way i'd manage it
+	CreateVM = 8;
+	Run = 8; // IScriptVM
 
 	// client.so
 	MsgFunc_SayText2 = 32;

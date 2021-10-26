@@ -3,6 +3,8 @@
 #include <offsets.hpp>
 #include <command.hpp>
 #include <console.hpp>
+#include <server.hpp>
+#include <vscript.hpp>
 
 #include <string>
 
@@ -13,15 +15,21 @@ DETOUR(Client::MsgFunc_SayText2, bf_read &msg) {
 
 	int id = (int)msg.ReadUnsigned(8);
 
-	char* text = (char*)alloca(256);
-	char* temp = text;
+	char* message = (char*)alloca(256);
+	char* temp = message;
 	while (char c = (char)(uint8_t)msg.ReadUnsigned(8)) {
-		*temp = c;
+		*temp = (c != '\n') ? c : 0;
 		temp++;
 	}
-	*temp = 0;
 
-	console->Print("id: %d, message: %s", id, text);
+	char* name = (char*)server->GetPlayerName(id);
+	while(*name) {
+		name++;
+		message++;
+	}
+	message++;
+	
+	vscript->DoChatCallbacks(id, message);
 
 	msg = pre;
 

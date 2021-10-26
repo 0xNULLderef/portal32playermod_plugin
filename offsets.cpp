@@ -21,4 +21,5 @@ namespace Offsets {
 	int GetHud;
 	int FindElement;
 	int ChatPrintf;
+	int Run;
 };
