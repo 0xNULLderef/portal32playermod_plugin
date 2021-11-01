@@ -10,6 +10,7 @@
 #include <command.hpp>
 #include <engine.hpp>
 #include <client.hpp>
+#include <gui.hpp>
 #include <offsets.hpp>
 #include <dumphex.hpp>
 
@@ -44,6 +45,9 @@ bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServ
 	client = new Client();
 	if(!client->Init()) return false;
 
+	gui = new GUI();
+	if(!gui->Init()) return false;
+
 	Command::RegisterAll();
 
 	return true;
@@ -51,6 +55,7 @@ bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServ
 
 void Plugin::Unload() {
 	console->Print("Gracefully returning the game to it's original state.\n");
+	gui->Shutdown();
 	console->Shutdown();
 	client->Shutdown();
 	vscript->Shutdown();
