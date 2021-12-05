@@ -6,11 +6,11 @@
 
 // -- module includes --
 #include <console.hpp>
-#include <tier1.hpp>
-#include <vscript.hpp>
-#include <server.hpp>
-#include <client.hpp>
 #include <command.hpp>
+#include <tier1.hpp>
+#include <server.hpp>
+#include <vscript.hpp>
+#include <client.hpp>
 
 #include <iostream>
 
@@ -23,7 +23,18 @@ Plugin::Plugin() {
 }
 
 CON_COMMAND(get_username, "get_username (index) - Gets player username by index (starting at 0)\n") {
-	console->Print("name: %p, %s\n", server->GetPlayerName(atoi(args[1])), server->GetPlayerName(atoi(args[1])));
+	console->Print("name: %s\n", server->GetPlayerName(atoi(args[1])));
+}
+
+CON_COMMAND(vscript_run, "run vscript with run\n") {
+	char* pszScript = (char*)args.m_pArgSBuffer;
+	pszScript += 11;
+	while(*pszScript == ' ') pszScript++;
+	vscript->Run(vscript->g_pScriptVM, pszScript, true);
+}
+
+CON_COMMAND(crash_and_burn, "self explanatory...\n") {
+	abort();
 }
 
 bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory) {

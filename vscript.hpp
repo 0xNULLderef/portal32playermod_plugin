@@ -7,9 +7,9 @@
 class VScript {
 public:
 	Interface* scriptmanager;
-	void* g_pScriptVM;
+	void* g_pScriptVM = nullptr;
 
-	using _Run = ScriptStatus_t (__cdecl*)(void* thisptr, const char *pszScript);
+	using _Run = ScriptStatus_t (__cdecl*)(void* thisptr, const char* pszScript, bool bWait);
 	_Run Run = nullptr;
 
 public:

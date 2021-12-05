@@ -1,5 +1,5 @@
 .vscode
 *.o
-pl.so
 portal2_files
 tests
+build

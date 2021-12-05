@@ -21,10 +21,12 @@ void AddChatCallback(const char* funcName) {
 REDECL(VScript::CreateVM);
 DETOUR_T(IScriptVM*, VScript::CreateVM, ScriptLanguage_t language) {
 	IScriptVM* g_pScriptVM = VScript::CreateVM(thisptr, language);
-	vscript->g_pScriptVM = g_pScriptVM;
-	auto vmInterface = Interface::Create(vscript->g_pScriptVM);
+	console->Print("Created VM: %p\n", g_pScriptVM);
+	auto vmInterface = Interface::Create(g_pScriptVM);
+	if(!vscript->g_pScriptVM) {
+		vscript->g_pScriptVM = g_pScriptVM;
+	}
 	vscript->Run = vmInterface->Original<_Run>(Offsets::Run);
-	Interface::Delete(vmInterface);
 	ScriptRegisterFunction(g_pScriptVM, GetPlayerName, "Gets player username by index");
 	ScriptRegisterFunction(g_pScriptVM, AddChatCallback, "Adds chat callback called with player id and message");
 	return g_pScriptVM;
@@ -50,7 +52,7 @@ void VScript::DoChatCallbacks(int id, char* message) {
 	char buf[256];
 	for(auto& callbackName: chatCallbackNames) {
 		snprintf(buf, 256, "%s(%d, \"%s\")", callbackName.c_str(), id, message);
-		vscript->Run(vscript->g_pScriptVM, buf);
+		// vscript->Run(vscript->g_pScriptVM, buf);
 	}
 }
 

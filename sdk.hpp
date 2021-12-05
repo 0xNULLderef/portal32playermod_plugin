@@ -309,7 +309,7 @@ struct ScriptVariant_t {
 	}
 
 	bool AssignTo(char **pDest) {
-		*pDest = "";
+		*pDest = (char*)"";
 		return false;
 	}
 
