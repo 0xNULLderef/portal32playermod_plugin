@@ -52,7 +52,7 @@ void VScript::DoChatCallbacks(int id, char* message) {
 	char buf[256];
 	for(auto& callbackName: chatCallbackNames) {
 		snprintf(buf, 256, "%s(%d, \"%s\")", callbackName.c_str(), id, message);
-		// vscript->Run(vscript->g_pScriptVM, buf);
+		vscript->Run(vscript->g_pScriptVM, buf, true);
 	}
 }
 
