@@ -26,14 +26,6 @@ CON_COMMAND(get_username, "get_username (index) - Gets player username by index 
 	console->Print("name: %p, %s\n", server->GetPlayerName(atoi(args[1])), server->GetPlayerName(atoi(args[1])));
 }
 
-CON_COMMAND(vscript_run, "run vscript with run\n") {
-	console->Print(args.m_pArgSBuffer);
-	char* pszScript = (char*)args.m_pArgSBuffer;
-	pszScript += 11;
-	while(*pszScript == ' ') pszScript++;
-	vscript->Run(vscript->g_pScriptVM ,pszScript);
-}
-
 bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory) {
 	console = new Console();
 	if(!console->Init()) return false;
