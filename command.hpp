@@ -18,7 +18,7 @@ public:
 public:
 	Command();
 	~Command();
-	Command(const char *name);
+	Command(const char* name);
 	Command(const char* pName, _CommandCallback callback, const char* pHelpString, int flags = 0, _CommandCompletionCallback completionFunc = nullptr);
 
 	ConCommand* ThisPtr();

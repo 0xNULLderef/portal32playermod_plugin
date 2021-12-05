@@ -98,7 +98,7 @@ struct LoggingContext {
 
 class ILoggingListener {
 public:
-	virtual void Log(const LoggingContext *ctx, const char *msg) = 0;
+	virtual void Log(const LoggingContext* ctx, const char* msg) = 0;
 };
 
 // -- VScript stuff -- HIGHLY EXPERIMENTAL
@@ -194,8 +194,8 @@ template <typename T> struct ScriptDeducer { /*enum { FIELD_TYPE = FIELD_TYPEUNK
 
 DECLARE_DEDUCE_FIELDTYPE( FIELD_VOID,		void );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_FLOAT,		float );
-DECLARE_DEDUCE_FIELDTYPE( FIELD_CSTRING,	const char * );
-DECLARE_DEDUCE_FIELDTYPE( FIELD_CSTRING,	char * );
+DECLARE_DEDUCE_FIELDTYPE( FIELD_CSTRING,	const char* );
+DECLARE_DEDUCE_FIELDTYPE( FIELD_CSTRING,	char* );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_VECTOR,		Vector );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_VECTOR,		const Vector &);
 DECLARE_DEDUCE_FIELDTYPE( FIELD_INTEGER,	int );
@@ -308,7 +308,7 @@ struct ScriptVariant_t {
 		}
 	}
 
-	bool AssignTo(char **pDest) {
+	bool AssignTo(char** pDest) {
 		*pDest = (char*)"";
 		return false;
 	}
@@ -317,7 +317,7 @@ struct ScriptVariant_t {
 		pDest->m_type = m_type;
 		if(m_type == FIELD_VECTOR) {
 			pDest->m_pVector = new Vector;
-			((Vector *)(pDest->m_pVector))->Init(m_pVector->x, m_pVector->y, m_pVector->z);
+			((Vector*)(pDest->m_pVector))->Init(m_pVector->x, m_pVector->y, m_pVector->z);
 			pDest->m_flags |= SV_FREE;
 		}
 		else if(m_type == FIELD_CSTRING) {
@@ -411,7 +411,7 @@ public:
 struct ScriptClassDesc_t {
 	ScriptClassDesc_t(void (*pfnInitializer)()) : m_pszScriptName(0), m_pszClassname(0), m_pszDescription(0), m_pBaseDesc(0), m_pfnConstruct(0), m_pfnDestruct(0), pHelper(NULL)  {
 		(*pfnInitializer)();
-		ScriptClassDesc_t **ppHead = GetDescList();
+		ScriptClassDesc_t** ppHead = GetDescList();
 		m_pNextDesc = *ppHead;
 		*ppHead = this;
 	}
@@ -423,7 +423,7 @@ struct ScriptClassDesc_t {
 	CUtlVector<ScriptFunctionBinding_t> m_FunctionBindings;
 
 	void* (*m_pfnConstruct)();
-	void (*m_pfnDestruct)(void *);
+	void (*m_pfnDestruct)(void*);
 	IScriptInstanceHelper*				pHelper; // optional helper
 
 	ScriptClassDesc_t*					m_pNextDesc;
@@ -461,10 +461,10 @@ public:
  	virtual bool Frame(float simTime) = 0;
 
 	virtual ScriptStatus_t Run(const char* pszScript, bool bWait = true) = 0;
-	inline ScriptStatus_t Run(const unsigned char* pszScript, bool bWait = true) { return Run((char *)pszScript, bWait); }
+	inline ScriptStatus_t Run(const unsigned char* pszScript, bool bWait = true) { return Run((char*)pszScript, bWait); }
 
  	virtual HSCRIPT CompileScript(const char* pszScript, const char* pszId = NULL) = 0;
-	inline HSCRIPT CompileScript(const unsigned char* pszScript, const char* pszId = NULL) { return CompileScript((char *)pszScript, pszId); }
+	inline HSCRIPT CompileScript(const unsigned char* pszScript, const char* pszId = NULL) { return CompileScript((char*)pszScript, pszId); }
 	virtual void ReleaseScript(HSCRIPT) = 0;
 
 	virtual ScriptStatus_t Run(HSCRIPT hScript, HSCRIPT hScope = NULL, bool bWait = true) = 0;
@@ -705,19 +705,19 @@ inline ScriptFunctionBindingStorageType_t ScriptConvertFreeFuncPtrToVoid(FUNCPTR
 
 #define DEFINE_NONMEMBER_FUNC_TYPE_DEDUCER(N) \
 	template <typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
-	inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t *pDesc, FUNCTION_RETTYPE (*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N)) { \
+	inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t* pDesc, FUNCTION_RETTYPE (*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N)) { \
 		pDesc->m_ReturnType = ScriptDeduceType(FUNCTION_RETTYPE); \
 		FUNC_APPEND_PARAMS_##N \
 	}
 #define DEFINE_MEMBER_FUNC_TYPE_DEDUCER(N) \
 	template <typename OBJECT_TYPE_PTR, typename FUNCTION_CLASS, typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
-	inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t *pDesc, OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N)) { \
+	inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t* pDesc, OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N)) { \
 		pDesc->m_ReturnType = ScriptDeduceType(FUNCTION_RETTYPE); \
 		FUNC_APPEND_PARAMS_##N \
 	}
 #define DEFINE_CONST_MEMBER_FUNC_TYPE_DEDUCER(N) \
 	template <typename OBJECT_TYPE_PTR, typename FUNCTION_CLASS, typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
-	inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t *pDesc, OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N) const) { \
+	inline void ScriptDeduceFunctionSignature(ScriptFuncDescriptor_t* pDesc, OBJECT_TYPE_PTR pObject, FUNCTION_RETTYPE (FUNCTION_CLASS::*pfnProxied)(FUNC_BASE_TEMPLATE_FUNC_PARAMS_##N) const) { \
 		pDesc->m_ReturnType = ScriptDeduceType(FUNCTION_RETTYPE); \
 		FUNC_APPEND_PARAMS_##N \
 	}
@@ -733,7 +733,7 @@ DEFINE_CONST_MEMBER_FUNC_TYPE_DEDUCER(1)
 	template <typename FUNC_TYPE, typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
 	class CNonMemberScriptBinding##N { \
 	public: \
- 		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn) { \
+ 		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void* pContext, ScriptVariant_t* pArguments, int nArguments, ScriptVariant_t* pReturn) { \
 			if (nArguments != N || !pReturn || pContext)return false; \
 			*pReturn = (ScriptConvertFreeFuncPtrFromVoid<FUNC_TYPE>(pFunction))(SCRIPT_BINDING_ARGS_##N); \
 			if (pReturn->m_type == FIELD_VECTOR) pReturn->m_pVector = new Vector(*pReturn->m_pVector); \
@@ -743,7 +743,7 @@ DEFINE_CONST_MEMBER_FUNC_TYPE_DEDUCER(1)
 	template <typename FUNC_TYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
 	class CNonMemberScriptBinding##N<FUNC_TYPE, void FUNC_BASE_TEMPLATE_FUNC_PARAMS_PASSTHRU_##N> { \
 	public: \
-		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn) { \
+		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void* pContext, ScriptVariant_t* pArguments, int nArguments, ScriptVariant_t* pReturn) { \
 			if (nArguments != N || pReturn || pContext) return false; \
 			(ScriptConvertFreeFuncPtrFromVoid<FUNC_TYPE>(pFunction))(SCRIPT_BINDING_ARGS_##N); \
 			return true; \
@@ -752,7 +752,7 @@ DEFINE_CONST_MEMBER_FUNC_TYPE_DEDUCER(1)
 	template <class OBJECT_TYPE_PTR, typename FUNC_TYPE, typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
 	class CMemberScriptBinding##N { \
 	public: \
- 		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn) { \
+ 		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void* pContext, ScriptVariant_t* pArguments, int nArguments, ScriptVariant_t* pReturn) { \
 			if (nArguments != N || !pReturn || !pContext) return false; \
 			*pReturn = (((OBJECT_TYPE_PTR)(pContext))->*ScriptConvertFuncPtrFromVoid<FUNC_TYPE>(pFunction))(SCRIPT_BINDING_ARGS_##N); \
 			if (pReturn->m_type == FIELD_VECTOR) pReturn->m_pVector = new Vector(*pReturn->m_pVector); \
@@ -762,7 +762,7 @@ DEFINE_CONST_MEMBER_FUNC_TYPE_DEDUCER(1)
 	template <class OBJECT_TYPE_PTR, typename FUNC_TYPE FUNC_TEMPLATE_FUNC_PARAMS_##N> \
 	class CMemberScriptBinding##N<OBJECT_TYPE_PTR, FUNC_TYPE, void FUNC_BASE_TEMPLATE_FUNC_PARAMS_PASSTHRU_##N> { \
 	public: \
-		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn) { \
+		static bool Call(ScriptFunctionBindingStorageType_t pFunction, void* pContext, ScriptVariant_t* pArguments, int nArguments, ScriptVariant_t* pReturn) { \
 			if (nArguments != N || pReturn || !pContext) return false; \
 			(((OBJECT_TYPE_PTR)(pContext))->*ScriptConvertFuncPtrFromVoid<FUNC_TYPE>(pFunction))(SCRIPT_BINDING_ARGS_##N); \
 			return true; \
@@ -948,13 +948,13 @@ public:
 		uint32_t lo = m_nInBufWord & ((1 << rem) - 1);
 		return (hi | lo) & ((1 << nbits) - 1);
 	}
-	const char *m_pDebugName;
+	const char* m_pDebugName;
 	bool m_bOverflow;
 	int m_nDataBits;
 	size_t m_nDataBytes;
 	uint32_t m_nInBufWord;
 	int m_nBitsAvail;
-	const uint32_t *m_pDataIn;
-	const uint32_t *m_pBufferEnd;
-	const uint32_t *m_pData;
+	const uint32_t* m_pDataIn;
+	const uint32_t* m_pBufferEnd;
+	const uint32_t* m_pData;
 };

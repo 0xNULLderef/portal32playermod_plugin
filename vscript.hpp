@@ -22,6 +22,7 @@ public:
 
 public:
 	void DoChatCallbacks(int id, char* message);
+	bool hasToResetVM = true;
 };
 
 extern VScript* vscript;

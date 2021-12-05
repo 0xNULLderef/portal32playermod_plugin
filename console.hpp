@@ -20,11 +20,11 @@ public:
 	using _ColorMsg = void(__cdecl*)(const Color& clr, const char* pMsgFormat, ...);
 	using _DevMsg = void(__cdecl*)(const char* pMsgFormat, ...);
 	using _DevWarning = void(__cdecl*)(const char* pMsgFormat, ...);
-	using _LoggingSystem_RegisterLoggingListener = void (__cdecl *)(ILoggingListener *listener);
-	using _LoggingSystem_PushLoggingState = void (__cdecl *)(bool threadLocal, bool clearState);
-	using _LoggingSystem_PopLoggingState = void (__cdecl *)(bool threadLocal);
-	using _LoggingSystem_HasTag = bool (__cdecl *)(int channelID, const char *tag);
-	using _LoggingSystem_SetChannelSpewLevelByTag = void (__cdecl *)(const char *tag, LoggingSeverity severity);
+	using _LoggingSystem_RegisterLoggingListener = void (__cdecl*)(ILoggingListener* listener);
+	using _LoggingSystem_PushLoggingState = void (__cdecl*)(bool threadLocal, bool clearState);
+	using _LoggingSystem_PopLoggingState = void (__cdecl*)(bool threadLocal);
+	using _LoggingSystem_HasTag = bool (__cdecl*)(int channelID, const char* tag);
+	using _LoggingSystem_SetChannelSpewLevelByTag = void (__cdecl*)(const char* tag, LoggingSeverity severity);
 
 	_Msg Msg = nullptr;
 	_ColorMsg ColorMsg = nullptr;

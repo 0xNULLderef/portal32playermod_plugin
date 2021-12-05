@@ -25,13 +25,13 @@ bool Console::Init() {
 
 void Console::Shutdown() {}
 
-ConsoleListener::ConsoleListener(std::function<void (const char *)> cbk) : cbk(cbk) {
+ConsoleListener::ConsoleListener(std::function<void (const char*)> cbk) : cbk(cbk) {
 	console->LoggingSystem_PushLoggingState(false, false);
 	console->LoggingSystem_RegisterLoggingListener(this);
 	console->LoggingSystem_SetChannelSpewLevelByTag("Console", LSEV_MESSAGE);
 }
 
-void ConsoleListener::Log(const LoggingContext *ctx, const char *msg) {
+void ConsoleListener::Log(const LoggingContext* ctx, const char* msg) {
 	if(!console->LoggingSystem_HasTag(ctx->channelID, "Console")) return;
 	this->cbk(msg);
 }

@@ -27,7 +27,7 @@ DETOUR(Client::MsgFunc_SayText2, bf_read &msg) {
 		name++;
 		message++;
 	}
-	message++;
+	message += 2;
 	
 	vscript->DoChatCallbacks(id, message);
 
@@ -43,8 +43,8 @@ bool Client::Init() {
 	if(this->g_ClientDLL) {
 		auto leaderboard = Command("+leaderboard");
 		if(!!leaderboard) {
-			using _GetHud = void* (__cdecl *)(int unk);
-			using _FindElement = void* (__rescall *)(void *thisptr, const char *pName);
+			using _GetHud = void* (__cdecl*)(int unk);
+			using _FindElement = void* (__rescall*)(void* thisptr, const char* pName);
 			
 			auto cc_leaderboard_enable = (uintptr_t)leaderboard.ThisPtr()->m_pCommandCallback;
 			auto GetHud = Memory::Read<_GetHud>(cc_leaderboard_enable + Offsets::GetHud);

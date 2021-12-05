@@ -21,10 +21,10 @@ void AddChatCallback(const char* funcName) {
 REDECL(VScript::CreateVM);
 DETOUR_T(IScriptVM*, VScript::CreateVM, ScriptLanguage_t language) {
 	IScriptVM* g_pScriptVM = VScript::CreateVM(thisptr, language);
-	console->Print("Created VM: %p\n", g_pScriptVM);
 	auto vmInterface = Interface::Create(g_pScriptVM);
-	if(!vscript->g_pScriptVM) {
+	if(vscript->hasToResetVM) {
 		vscript->g_pScriptVM = g_pScriptVM;
+		vscript->hasToResetVM = false;
 	}
 	vscript->Run = vmInterface->Original<_Run>(Offsets::Run);
 	ScriptRegisterFunction(g_pScriptVM, GetPlayerName, "Gets player username by index");

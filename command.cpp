@@ -24,8 +24,8 @@ ConCommand* Command::ThisPtr() {
 	return this->ptr;
 }
 
-Command::Command(const char *name) {
-	this->ptr = reinterpret_cast<ConCommand *>(tier1->FindCommandBase(tier1->g_pCVar->ThisPtr(), name));
+Command::Command(const char* name) {
+	this->ptr = reinterpret_cast<ConCommand*>(tier1->FindCommandBase(tier1->g_pCVar->ThisPtr(), name));
 	this->isReference = true;
 }
 

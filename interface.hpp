@@ -51,7 +51,7 @@ public:
 		return reinterpret_cast<void*>(this->baseclass);
 	}
 
-	static Interface *Create(void *ptr, bool copyVtable = true, bool autoHook = true);
+	static Interface* Create(void* ptr, bool copyVtable = true, bool autoHook = true);
 	static Interface* Create(const char* filename, const char* interfaceSymbol, bool copyVtable = true, bool autoHook = true);
 	static void Delete(Interface* ptr);
 	static void* GetPtr(const char* filename, const char* interfaceSymbol);

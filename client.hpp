@@ -5,11 +5,11 @@
 
 class Client {
 private:
-	Interface *g_ClientDLL = nullptr;
-	Interface *g_HudChat = nullptr;
+	Interface* g_ClientDLL = nullptr;
+	Interface* g_HudChat = nullptr;
 
 public:
-	using _ChatPrintf = void (*)(void *thisptr, int iPlayerIndex, int iFilter, const char *fmt, ...);
+	using _ChatPrintf = void (*)(void* thisptr, int iPlayerIndex, int iFilter, const char* fmt, ...);
 
 	_ChatPrintf ChatPrintf = nullptr;
 
