@@ -1,6 +1,7 @@
 #include <server.hpp>
 
 #include <offsets.hpp>
+#include <command.hpp>
 
 Server::Server() {}
 
@@ -9,6 +10,12 @@ bool Server::Init() {
 	if(this->g_ServerGameDLL) {
 		auto Think = this->g_ServerGameDLL->Original(Offsets::Think);
 		Memory::Read<_UTIL_PlayerByIndex>(Think + Offsets::UTIL_PlayerByIndex, &this->UTIL_PlayerByIndex);
+	}
+	void* say_callback = Command("say").ThisPtr()->m_pCommandCallback;
+	if(say_callback) {
+		uintptr_t insn_addr = (uintptr_t)say_callback + 67;
+		Memory::UnProtect((void *)(insn_addr + 2), 1);
+		*(char *)(insn_addr + 2) = 0x5C;
 	}
 	return this->g_ServerGameDLL && this->UTIL_PlayerByIndex;
 }
