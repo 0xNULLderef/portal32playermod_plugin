@@ -20,6 +20,7 @@ public:
 	const char* Name() { return MODULE("client"); }
 
 public:
+	DECL_DETOUR(LevelInitPreEntity, const char *levelName);
 	DECL_DETOUR(MsgFunc_SayText2, bf_read &msg);
 };
 

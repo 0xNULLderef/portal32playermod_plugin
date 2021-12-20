@@ -33,6 +33,7 @@ Portal2::Portal2() {
 	Run = 8; // IScriptVM
 
 	// client.so
+	LevelInitPreEntity = 5;
 	MsgFunc_SayText2 = 32;
 	GetHud = 146;
 	FindElement = 161;

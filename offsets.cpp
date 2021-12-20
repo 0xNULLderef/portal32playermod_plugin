@@ -22,4 +22,5 @@ namespace Offsets {
 	int FindElement;
 	int ChatPrintf;
 	int Run;
+	int LevelInitPreEntity;
 };

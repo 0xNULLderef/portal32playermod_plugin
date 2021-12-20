@@ -22,4 +22,5 @@ namespace Offsets {
 	extern int FindElement;
 	extern int ChatPrintf;
 	extern int Run;
+	extern int LevelInitPreEntity;
 };

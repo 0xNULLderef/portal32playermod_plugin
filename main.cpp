@@ -74,13 +74,10 @@ const char* Plugin::GetPluginDescription() {
 	return "P2 32 player mod plugin (indev)";
 }
 
-void Plugin::LevelInit(char const* pMapName) {
-	vscript->hasToResetVM = true;
-}
-
 // Unused callbacks
 void Plugin::Pause() {}
 void Plugin::UnPause() {}
+void Plugin::LevelInit(char const* pMapName) { }
 void Plugin::ServerActivate(void* pEdictList, int edictCount, int clientMax) {}
 void Plugin::GameFrame(bool simulating) {}
 void Plugin::LevelShutdown() {}

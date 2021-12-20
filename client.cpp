@@ -8,7 +8,13 @@
 
 #include <string>
 
+REDECL(Client::LevelInitPreEntity);
 REDECL(Client::MsgFunc_SayText2);
+
+DETOUR(Client::LevelInitPreEntity, const char *levelName) {
+	vscript->hasToResetVM = true;
+	return Client::LevelInitPreEntity(thisptr, levelName);
+}
 
 DETOUR(Client::MsgFunc_SayText2, bf_read &msg) {
 	bf_read pre = msg;
@@ -41,6 +47,7 @@ Client::Client() {}
 bool Client::Init() {
 	this->g_ClientDLL = Interface::Create(this->Name(), "VClient016");
 	if(this->g_ClientDLL) {
+		this->g_ClientDLL->Hook(Client::LevelInitPreEntity_Hook, Client::LevelInitPreEntity, Offsets::LevelInitPreEntity);
 		auto leaderboard = Command("+leaderboard");
 		if(!!leaderboard) {
 			using _GetHud = void* (__cdecl*)(int unk);
@@ -62,6 +69,7 @@ bool Client::Init() {
 }
 
 void Client::Shutdown() {
+	this->g_ClientDLL->Unhook(Offsets::LevelInitPreEntity);
 	this->g_HudChat->Unhook(Offsets::MsgFunc_SayText2);
 	Interface::Delete(this->g_HudChat);
 }
