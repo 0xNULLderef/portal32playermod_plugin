@@ -1,3 +1,6 @@
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
+
 #include <sdk.hpp>
 
 #include <utils.hpp>
@@ -20,8 +23,9 @@ public:
 	const char* Name() { return MODULE("client"); }
 
 public:
-	DECL_DETOUR(LevelInitPreEntity, const char *levelName);
 	DECL_DETOUR(MsgFunc_SayText2, bf_read &msg);
 };
 
 extern Client* client;
+
+#endif // CLIENT_HPP

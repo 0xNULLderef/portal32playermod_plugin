@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PORTAL2_HPP
+#define PORTAL2_HPP
 
 class Portal2 {
 public:
@@ -6,3 +7,5 @@ public:
 };
 
 extern Portal2* portal2;
+
+#endif // PORTAL2_HPP

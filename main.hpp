@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MAIN_HPP
+#define MAIN_HPP
 
 #include <sdk.hpp>
 
@@ -32,3 +33,5 @@ public:
 };
 
 extern Plugin plugin;
+
+#endif // MAIN_HPP

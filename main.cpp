@@ -11,6 +11,7 @@
 #include <server.hpp>
 #include <vscript.hpp>
 #include <client.hpp>
+#include <engine.hpp>
 
 #include <iostream>
 
@@ -55,6 +56,9 @@ bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServ
 	client = new Client();
 	if(!client->Init()) return false;
 
+	engine = new Engine();
+	if(!engine->Init()) return false;
+
 	Command::RegisterAll();
 
 	return true;
@@ -63,6 +67,7 @@ bool Plugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServ
 void Plugin::Unload() {
 	console->Print("Gracefully returning the game to it's original state.\n");
 	console->Shutdown();
+	engine->Shutdown();
 	client->Shutdown();
 	vscript->Shutdown();
 	server->Shutdown();
@@ -77,7 +82,7 @@ const char* Plugin::GetPluginDescription() {
 // Unused callbacks
 void Plugin::Pause() {}
 void Plugin::UnPause() {}
-void Plugin::LevelInit(char const* pMapName) { }
+void Plugin::LevelInit(char const* pMapName) {}
 void Plugin::ServerActivate(void* pEdictList, int edictCount, int clientMax) {}
 void Plugin::GameFrame(bool simulating) {}
 void Plugin::LevelShutdown() {}

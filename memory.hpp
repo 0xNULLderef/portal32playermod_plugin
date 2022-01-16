@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MEMORY_HPP
+#define MEMORY_HPP
 
 #include <memory>
 #include <vector>
@@ -92,3 +93,5 @@ namespace Memory {
 		mprotect((void*)startPage, pageLen, PROT_READ | PROT_WRITE | PROT_EXEC);
 	}
 };
+
+#endif // MEMORY_HPP

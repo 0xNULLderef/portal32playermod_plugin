@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TIER1_HPP
+#define TIER1_HPP
 
 #include <interface.hpp>
 #include <sdk.hpp>
@@ -36,3 +37,5 @@ public:
 };
 
 extern Tier1* tier1;
+
+#endif // TIER1_HPP

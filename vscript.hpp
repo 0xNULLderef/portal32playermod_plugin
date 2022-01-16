@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VSCRIPT_HPP
+#define VSCRIPT_HPP
 
 #include <sdk.hpp>
 #include <interface.hpp>
@@ -26,3 +27,5 @@ public:
 };
 
 extern VScript* vscript;
+
+#endif // VSCRIPT_HPP

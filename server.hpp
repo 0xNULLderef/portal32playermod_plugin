@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SERVER_HPP
+#define SERVER_HPP
 
 #include <interface.hpp>
 #include <utils.hpp>
@@ -22,3 +23,5 @@ public:
 };
 
 extern Server* server;
+
+#endif // SERVER_HPP

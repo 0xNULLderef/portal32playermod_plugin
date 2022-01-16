@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OFFSETS_HPP
+#define OFFSETS_HPP
 
 namespace Offsets {
 	extern int RegisterConCommand;
@@ -22,5 +23,7 @@ namespace Offsets {
 	extern int FindElement;
 	extern int ChatPrintf;
 	extern int Run;
-	extern int LevelInitPreEntity;
+	extern int LevelInit;
 };
+
+#endif // OFFSETS_HPP

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CONSOLE_HPP
+#define CONSOLE_HPP
 
 #include <functional>
 #include <utils.hpp>
@@ -59,3 +60,5 @@ private:
 };
 
 extern Console* console;
+
+#endif // CONSOLE_HPP

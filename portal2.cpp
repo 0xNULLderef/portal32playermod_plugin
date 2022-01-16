@@ -14,6 +14,7 @@ Portal2::Portal2() {
 	InternalSetIntValue = 21;
 	Create = 25;
 	AutoCompletionFunc = 46;
+	LevelInit = 3;
 
 	// libvstdlib.so
 	RegisterConCommand = 9;
@@ -33,7 +34,6 @@ Portal2::Portal2() {
 	Run = 8; // IScriptVM
 
 	// client.so
-	LevelInitPreEntity = 5;
 	MsgFunc_SayText2 = 32;
 	GetHud = 146;
 	FindElement = 161;
