@@ -42,6 +42,7 @@ public:
 	template <typename... T> void Print(const char* fmt, T... args) {
 		this->ColorMsg(DEFAULT_COLOR, fmt, args...);
 	}
+	void DumpHex(const void* data, size_t size);
 
 	virtual ~Console() = default;
 	bool Init();

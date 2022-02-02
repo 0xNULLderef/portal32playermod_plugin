@@ -10,25 +10,16 @@
 
 REDECL(Client::MsgFunc_SayText2);
 
-DETOUR(Client::MsgFunc_SayText2, bf_read &msg) {
+DETOUR(Client::MsgFunc_SayText2, bf_read& msg) {
 	bf_read pre = msg;
 
 	int id = (int)msg.ReadUnsigned(8);
+	bool wantsToChat = (bool)msg.ReadUnsigned(8);
+	(void)wantsToChat; // so i can Werror in the future
+	char* message = (char*)(*(uintptr_t*)((uintptr_t)&msg + 0x20) + 2);
+	while(*message++); // the color thing
+	while(*message++); // username
 
-	char* message = (char*)alloca(256);
-	char* temp = message;
-	while (char c = (char)(uint8_t)msg.ReadUnsigned(8)) {
-		*temp = (c != '\n') ? c : 0;
-		temp++;
-	}
-
-	char* name = (char*)server->GetPlayerName(id);
-	while(*name) {
-		name++;
-		message++;
-	}
-	message += 2;
-	
 	vscript->DoChatCallbacks(id, message);
 
 	msg = pre;
