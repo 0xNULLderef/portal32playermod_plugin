@@ -14,13 +14,18 @@ DETOUR(Client::MsgFunc_SayText2, bf_read& msg) {
 	bf_read pre = msg;
 
 	int id = (int)msg.ReadUnsigned(8);
-	bool wantsToChat = (bool)msg.ReadUnsigned(8);
-	(void)wantsToChat; // so i can Werror in the future
-	char* message = (char*)(*(uintptr_t*)((uintptr_t)&msg + 0x20) + 2);
-	while(*message++); // the color thing
-	while(*message++); // username
 
-	vscript->DoChatCallbacks(id, message);
+	while(msg.ReadUnsigned(8));
+	while(msg.ReadUnsigned(8));
+
+	auto buf = std::make_unique<char[]>(256);
+	char* temp = buf.get();
+	while (char c = (char)(uint8_t)msg.ReadUnsigned(8)) {
+		*temp = (c != '\n') ? c : 0;
+		temp++;
+	}
+
+	vscript->DoChatCallbacks(id, buf.get());
 
 	msg = pre;
 
