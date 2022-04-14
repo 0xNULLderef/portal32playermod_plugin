@@ -21,7 +21,7 @@ bool Memory::TryGetModule(const char* moduleName, Memory::ModuleInfo* info) {
 			std::snprintf(module.name, sizeof(module.name), "%s", temp.c_str());
 			module.base = info->dlpi_addr + info->dlpi_phdr[0].p_paddr;
 			module.size = info->dlpi_phdr[0].p_memsz;
-			std::strncpy(module.path, info->dlpi_name, sizeof(module.path));
+			std::strncpy(module.path, info->dlpi_name, sizeof(module.path) - 1);
 			Memory::moduleList.push_back(module);
 			return 0;
 		}, nullptr);

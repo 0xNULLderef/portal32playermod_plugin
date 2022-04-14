@@ -30,9 +30,9 @@ Command::Command(const char* name) {
 }
 
 Command::Command(const char* pName, _CommandCallback callback, const char* pHelpString, int flags, _CommandCompletionCallback completionFunc) :
-	isReference(false),
+	version(0),
 	isRegistered(false),
-	version(0)
+	isReference(false)
 {
 	this->ptr = new ConCommand(pName, callback, pHelpString, flags, completionFunc);
 	Command::GetList().push_back(this);

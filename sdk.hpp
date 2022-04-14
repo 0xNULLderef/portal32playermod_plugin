@@ -179,7 +179,7 @@ typedef long long int64;
 
 struct Vector {
 	float x, y, z;
-	inline Vector() : x(0), y(y), z(0) {}
+	inline Vector() : x(0), y(0), z(0) {}
 	inline Vector(float x, float y, float z) : x(x), y(y), z(z) {}
 	inline void Init(float x, float y, float z) {
 		this->x = x;
@@ -210,17 +210,17 @@ DECLARE_DEDUCE_FIELDTYPE( FIELD_VARIANT,	ScriptVariant_t );
 typedef int ScriptDataType_t;
 
 struct ScriptVariant_t {
-	ScriptVariant_t() :						m_flags(0), m_type(FIELD_VOID)		{ m_pVector = 0; }
-	ScriptVariant_t(int val) :				m_flags(0), m_type(FIELD_INTEGER)	{ m_int = val;}
-	ScriptVariant_t(float val) :			m_flags(0), m_type(FIELD_FLOAT)		{ m_float = val; }
-	ScriptVariant_t(double val) :			m_flags(0), m_type(FIELD_FLOAT)		{ m_float = (float)val; }
-	ScriptVariant_t(char val) :				m_flags(0), m_type(FIELD_CHARACTER)	{ m_char = val; }
-	ScriptVariant_t(bool val) :				m_flags(0), m_type(FIELD_BOOLEAN)	{ m_bool = val; }
-	ScriptVariant_t(HSCRIPT val) :			m_flags(0), m_type(FIELD_HSCRIPT)	{ m_hScript = val; }
+	ScriptVariant_t() :						m_type(FIELD_VOID), m_flags(0)		{ m_pVector = 0; }
+	ScriptVariant_t(int val) :				m_type(FIELD_INTEGER), m_flags(0)	{ m_int = val;}
+	ScriptVariant_t(float val) :			m_type(FIELD_FLOAT), m_flags(0)		{ m_float = val; }
+	ScriptVariant_t(double val) :			m_type(FIELD_FLOAT), m_flags(0)		{ m_float = (float)val; }
+	ScriptVariant_t(char val) :				m_type(FIELD_CHARACTER), m_flags(0)	{ m_char = val; }
+	ScriptVariant_t(bool val) :				m_type(FIELD_BOOLEAN), m_flags(0)	{ m_bool = val; }
+	ScriptVariant_t(HSCRIPT val) :			m_type(FIELD_HSCRIPT), m_flags(0)	{ m_hScript = val; }
 
-	ScriptVariant_t(const Vector &val, bool bCopy = false) :	m_flags(0), m_type(FIELD_VECTOR)	{ if(!bCopy) { m_pVector = &val; } else { m_pVector = new Vector(val); m_flags |= SV_FREE; } }
-	ScriptVariant_t(const Vector* val, bool bCopy = false) :	m_flags(0), m_type(FIELD_VECTOR)	{ if(!bCopy) { m_pVector = val; } else { m_pVector = new Vector(*val); m_flags |= SV_FREE; } }
-	ScriptVariant_t(const char* val , bool bCopy = false) :		m_flags(0), m_type(FIELD_CSTRING)	{ if(!bCopy) { m_pszString = val; } else { m_pszString = strdup(val); m_flags |= SV_FREE; } }
+	ScriptVariant_t(const Vector &val, bool bCopy = false) :	m_type(FIELD_VECTOR), m_flags(0)	{ if(!bCopy) { m_pVector = &val; } else { m_pVector = new Vector(val); m_flags |= SV_FREE; } }
+	ScriptVariant_t(const Vector* val, bool bCopy = false) :	m_type(FIELD_VECTOR), m_flags(0)	{ if(!bCopy) { m_pVector = val; } else { m_pVector = new Vector(*val); m_flags |= SV_FREE; } }
+	ScriptVariant_t(const char* val , bool bCopy = false) :		m_type(FIELD_CSTRING), m_flags(0)	{ if(!bCopy) { m_pszString = val; } else { m_pszString = strdup(val); m_flags |= SV_FREE; } }
 
 	bool IsNull() const						{ return (m_type == FIELD_VOID); }
 

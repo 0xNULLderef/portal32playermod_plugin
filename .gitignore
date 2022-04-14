@@ -1,5 +1,3 @@
 .vscode
-*.o
-portal2_files
-tests
 build
+32pmod.so
